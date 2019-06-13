@@ -34,6 +34,22 @@ def randomScene():
     world.insert(sphere(Metal(vec3(0.7, 0.6, 0.5)), vec3(4.0, 1.0, 0.0), 1.0))
     return world
 
+def motionScene():
+    world = hitableCollection()
+    world.insert(sphere(Lambertian(vec3(0.5, 0.5, 0.5)), vec3(0.0, -1000.0, 0.0), 1000))
+    for a in range(-4, 4):
+        for b in range(-4, 4):
+            choose_mat = random.uniform(0.0, 1.0)
+            center = vec3(a + 0.9 * random.uniform(0.0, 1.0), 0.2, b + 0.9 * random.uniform(0.0, 1.0))
+            if (center - vec3(4.0, 0.2, 0.0)).length() > 0.9:
+                if choose_mat < 0.8:
+                    world.insert(movingSphere(Lambertian(vec3(random.uniform(0.0, 1.0) * random.uniform(0.0, 1.0), random.uniform(0.0, 1.0) * random.uniform(0.0, 1.0), random.uniform(0.0, 1.0) * random.uniform(0.0, 1.0))), center, 0.2, center + vec3(0, 0.5 * random.uniform(0.0, 1.0), 0), 0.0, 1.0))
+                elif choose_mat < 0.95:
+                    world.insert(movingSphere(Metal(vec3(0.5 * (1 + random.uniform(0.0, 1.0)), 0.5 * (1 + random.uniform(0.0, 1.0)), 0.5 * (1 + random.uniform(0.0, 1.0))), 0.5 * random.uniform(0.0, 1.0)), center, 0.2, center + vec3(0, 0.5 * random.uniform(0.0, 1.0), 0), 0.0, 1.0))
+                else:
+                    world.insert(movingSphere(Dieletric(1.5), center, 0.2, center + vec3(0, 0.5 * random.uniform(0.0, 1.0), 0), 0.0, 1.0))
+    return world
+
 def testScene():
     world = hitableCollection()
     world.insert(sphere(Lambertian(vec3(0.5, 0.5, 0.5)), vec3(0.0, -1000.0, 0.0), 1000))
@@ -41,7 +57,6 @@ def testScene():
     world.insert(sphere(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(-4.0, 1.0, 0.0), 1.0))
     world.insert(sphere(Metal(vec3(0.7, 0.6, 0.5)), vec3(4.0, 1.0, 0.0), 1.0))
     return world
-
 
 def doWork(line, cam, world, spp, NX, NY):
     results = ""
@@ -69,14 +84,12 @@ def tempColor(r, world, depth):
         scattered = ray(vec3(), vec3())
         attenuation = vec3()
         if depth < 50 and rec.material.scatter(r, rec, attenuation, scattered):
-            #print("1")
             return vec3.multiply(attenuation, tempColor(scattered, world, depth + 1))
         else:
             return vec3()
     else:
         direction = r.getDirection().getNorm()
         t = 0.5 * (direction[1] + 1.0)
-        #print("2")
         return vec3(1.0, 1.0, 1.0) * (1.0 - t) + vec3(0.5, 0.7, 1.0) * t
 
 def main():
@@ -91,14 +104,15 @@ def main():
     print("Samples per pixel: %d" % args.spp)
     print("Number of process: %d" % args.j) 
 
-    world = randomScene()
+    #world = randomScene()
     #world = testScene()
+    world = motionScene()
 
     camera_pos = vec3(13, 2, 3)
     look_at = vec3(0, 0, 0)
     dist_to_focus = 10.0
     aperture = 0.1
-    cam = Camera(args.resolution[0] / args.resolution[1], aperture, dist_to_focus, 20, vec3(0.0, 1.0, 0.0), camera_pos, look_at)
+    cam = Camera(args.resolution[0] / args.resolution[1], 20, vec3(0.0, 1.0, 0.0), camera_pos, look_at,  aperture, dist_to_focus, 0.0, 1.0)
 
     # Open and clean file
     f = open("results/image.ppm", "w+")

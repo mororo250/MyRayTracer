@@ -22,5 +22,4 @@ class hitableCollection:
                 closest_so_far = temp_rec.t
                 rec.__dict__ = temp_rec.__dict__.copy()
         return hit_anything
-
-            
+          

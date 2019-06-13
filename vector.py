@@ -92,3 +92,4 @@ class vec3:
         aux += rhs[1] * lhs[1]
         aux += rhs[2] * lhs[2]
         return aux
+        

@@ -34,7 +34,7 @@ class Lambertian:
 
     def scatter(self, r_in, rec, attenuation, scattered):
         target = rec.point + rec.normal + randomInUnitSphere()
-        scattered.__dict__ = ray(rec.point, target - rec.point).__dict__.copy()
+        scattered.__dict__ = ray(rec.point, target - rec.point, r_in.getTime()).__dict__.copy()
         attenuation.__dict__ = self.__albedo.__dict__.copy()
         return True
 
@@ -49,7 +49,7 @@ class Metal:
 
     def scatter(self, r_in, rec, attenuation, scattered):
         reflected = reflect(r_in.getDirection().getNorm(), rec.normal)
-        scattered.__dict__ = ray(rec.point, reflected +  randomInUnitSphere() * self.__fuzz).__dict__.copy()
+        scattered.__dict__ = ray(rec.point, reflected +  randomInUnitSphere() * self.__fuzz, r_in.getTime()).__dict__.copy()
         attenuation.__dict__ = self.__albedo.__dict__.copy()
         return (vec3.dot(scattered.getDirection(), rec.normal) > 0)
 
@@ -72,10 +72,10 @@ class Dieletric:
         if (refract(r_in.getDirection(), outward_normal, ni_over_nt, refracted)):
             reflected_prob = schlick(cosine, self.ref_idx)
         else:
-            scattered.__dict__ = ray(rec.point, reflected).__dict__
+            scattered.__dict__ = ray(rec.point, reflected, r_in.getTime()).__dict__
             reflected_prob = 1.0
         if (random.uniform(0 , 1) < reflected_prob):
-            scattered.__dict__ = ray(rec.point, reflected).__dict__
+            scattered.__dict__ = ray(rec.point, reflected, r_in.getTime()).__dict__
         else:
-            scattered.__dict__ = ray(rec.point, refracted).__dict__
+            scattered.__dict__ = ray(rec.point, refracted, r_in.getTime()).__dict__
         return True

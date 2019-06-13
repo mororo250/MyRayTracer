@@ -11,7 +11,7 @@ def randomInUnitDisk():
 
 class Camera:
     
-    def __init__(self, aspect, aperture = 0.1, focus_dist = 1.0, fov = 60, up = vec3(0.0, 1.0, 0.0), position = vec3(0.0, 0.0, 0.0), look_at = vec3(0.0, 0.0, -1.0)):
+    def __init__(self, aspect, fov, up, position, look_at, aperture = 0.1, focus_dist = 1.0, time0 = 0.0, time1 = 0.0):
         theta = fov * math.pi / 180
         half_height = math.tan(theta / 2)
         half_width = aspect * half_height
@@ -23,11 +23,12 @@ class Camera:
         self.__horizontal = u * 2 * half_width * focus_dist
         self.__vertical = v * 2 * half_height * focus_dist
         self.__lens_radius = aperture / 2.0
+        self.__time0 = time0
+        self.__time1 = time1
 
     def getRay(self, u, v):
         rd = randomInUnitDisk() * self.__lens_radius
         offset = u * rd[0] + v * rd[1]
         position = vec3(self.__position[0] + offset, self.__position[1] + offset, self.__position[2] + offset)
-        return ray(position, self.__lower_left + self.__horizontal*u + self.__vertical*v - position)
-
-    
+        time = self.__time0 + random.uniform(0, 1) * (self.__time0 - self.__time1)
+        return ray(position, self.__lower_left + self.__horizontal*u + self.__vertical*v - position, time)
