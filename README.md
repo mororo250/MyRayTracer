@@ -35,11 +35,10 @@ Python é uma lingugem muito lenta quando comparada com linguagens de baixo nív
 
 Não é correto falar que foi usado multi Threading no programa, pois na realidade é utilizada uma abordadem multi processing. Que possuem algumas diferenças como por exemplo multi processing não compartilha informação e entre o outros. A principal razação de utilizar multi processing é porcausa de uma caracteristica do python chamada xxx que faz com que o multi threading do python funcione em apenas um core, o que definitivamente não resolve o problema de eficiencia do programa. Para contornar esse problema foi utilizada a biblioteca multiprocessing que cria novos processos ao invez de novos threads.
 
-a classe pool que deixa o programa pequeno e limpo:
+Para tornar a implementação simples o programa foi divido em linhas sendo a renderização de cada linha um trabalho a ser executado por um dos processo. Essa abordagem é bem favoravel por ser bem compativel com a classe Pool que deixa o programa pequeno e limpo. Basicamente foi necessario apenas duas linhas:
 
-```test
+```python
 pool = multiprocessing.Pool(processes = args.threads)
-results = pool.imap_unordered(partial(doWork, cam = cam, world = world, spp = args.spp, NX = args.resolution[0], NY args.resolution[1]), reversed(range(0, args.resolution[1])))
+results = pool.imap(partial(doWork, cam = cam, world = world, spp = args.spp, NX = args.resolution[0], NY args.resolution[1]), reversed(range(0, args.resolution[1])))
 ```
-    perceba que foi usado imap ao invez de map. A razão disso é que o imap permite interação com os resultados 
-
+Perceba que foi usado imap ao invez de map. A razão disso é que o imap permite interação em tempo real com resultados de tarefas finalizadas. Isso permitiu acompanhar o progresso da renderização assim como prever o tempo restante para finaliza-lá. Apesar da previsão do tempo restante ser bastante impressiva devido ao fato de algumas linhas serem muito mais baratas que outras.
