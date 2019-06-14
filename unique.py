@@ -485,7 +485,7 @@ def motionScene():
 def cubeScene():
     world = hitableCollection()
     world.insert(xz_rect(Lambertian(vec3(0.5, 0.5, 0.5)), -500, 500, -500, 500, 0))
-    world.insert(cube(Metal(vec3(0.7, 0.6, 0.5), 0.5), vec3(-1.0, 0, -1.0), vec3(1.0, 2.0, 1.0)))
+    world.insert(cube(Metal(vec3(0.7, 0.6, 0.5), 0.5), vec3(-1.5, 0, -1.0), vec3(0.5, 2.0, 1.0)))
     world.insert(cube(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(3.0, 0.0, -1.0), vec3(5.0, 2.0, 1.0)))
     return world
 
@@ -525,15 +525,15 @@ def tempColor(r, world, depth):
 
 def main():
     parser = argparse.ArgumentParser(description = "Renderer based on the book Ray Tracing in One Weekend by Peter Shirley")
-    parser.add_argument("-r", "--resolution", type = int, nargs = 2, metavar = ("x", "y"), default = (480, 340), help = "Resolution of the final image. Ex: 1920 1080")
-    parser.add_argument("-spp", nargs = '?', type = int, default = 100, help = "Samples per pixel")
-    parser.add_argument("-scene", nargs = '?', type = str, default = "basic", choices = ["basic", "random", "motion", "cube"], help = "Scene to render")
-    parser.add_argument("-i", "--image", nargs = '?', type = str, default = "results/image.ppm", help = "image relative path")
-    parser.add_argument("-t", "--threads", nargs = '?', type = int, default = multiprocessing.cpu_count(), help = "Number of processes created")
+    parser.add_argument("-r", "--resolution", type = int, nargs = 2, metavar = ("x", "y"), default = (340, 480), help = "Resolution of the final image. Ex: 1920 1080")
+    parser.add_argument("-spp", nargs = '?', type = int, default = 64, help = "Samples per pixel")
+    parser.add_argument("-scene", nargs = '?', type = str, default = "basic", choices = ["basic", "random", "motion", "cube"], help = "Scene to be render")
+    parser.add_argument("-i", "--image", nargs = '?', type = str, default = "results/image.ppm", help = "Image relative path")
+    parser.add_argument("-t", "--threads", nargs = '?', type = int, default = multiprocessing.cpu_count(), help = "Number of processes to be create")
     args = parser.parse_args()
 
     # Print configuration
-    print("Renrenring %s scene" % args.scene)
+    print("Rendenring %s scene" % args.scene)
     print("write in %s" % args.image)
     print("Resolution: %d x %d" % (args.resolution[0], args.resolution[1]))
     print("Samples per pixel: %d" % args.spp)
@@ -569,7 +569,7 @@ def main():
     
     # MultiThreading
     pool = multiprocessing.Pool(processes = args.threads)
-    results = pool.imap_unordered(partial(doWork, cam = cam, world = world, spp = args.spp, NX = args.resolution[0], NY = args.resolution[1]), reversed(range(0, args.resolution[1])))
+    results = pool.imap(partial(doWork, cam = cam, world = world, spp = args.spp, NX = args.resolution[0], NY = args.resolution[1]), reversed(range(0, args.resolution[1])))
     pool.close
     jobs_completed = 0
     timer = time.time()
