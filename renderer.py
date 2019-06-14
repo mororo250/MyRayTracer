@@ -13,7 +13,14 @@ from hitableCollection import *
 from camera import *
 from material import *
 
-MAX_DISTANCE = 100000
+# Scenes
+def basicScene():
+    world = hitableCollection()
+    world.insert(sphere(Lambertian(vec3(0.5, 0.5, 0.5)), vec3(0.0, -1000.0, 0.0), 1000))
+    world.insert(sphere(Dieletric(1.5), vec3(0.0, 1.0, 0.0), 1.0))
+    world.insert(sphere(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(-4.0, 1.0, 0.0), 1.0))
+    world.insert(sphere(Metal(vec3(0.7, 0.6, 0.5)), vec3(4.0, 1.0, 0.0), 0.0))
+    return world
 
 def randomScene():
     world = hitableCollection()
@@ -31,7 +38,7 @@ def randomScene():
                     world.insert(sphere(Dieletric(1.5), center, 0.2))
     world.insert(sphere(Dieletric(1.5), vec3(0.0, 1.0, 0.0), 1.0))
     world.insert(sphere(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(-4.0, 1.0, 0.0), 1.0))
-    world.insert(sphere(Metal(vec3(0.7, 0.6, 0.5)), vec3(4.0, 1.0, 0.0), 1.0))
+    world.insert(sphere(Metal(vec3(0.7, 0.6, 0.5)), vec3(4.0, 1.0, 0.0), 0.0))
     return world
 
 def motionScene():
@@ -53,9 +60,11 @@ def motionScene():
 def cubeScene():
     world = hitableCollection()
     world.insert(xz_rect(Lambertian(vec3(0.5, 0.5, 0.5)), -500, 500, -500, 500, 0))
-    world.insert(cube(Metal(vec3(0.7, 0.6, 0.5), 0.5), vec3(-1.0, 0, -1.0), vec3(1.0, 2.0, 1.0)))
+    world.insert(cube(Metal(vec3(0.7, 0.6, 0.5), 0.2), vec3(-1.5, 0, 0.0), vec3(0.5, 2.0, 2.0)))
     world.insert(cube(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(3.0, 0.0, -1.0), vec3(5.0, 2.0, 1.0)))
     return world
+
+# main program / renderer manager
 
 def doWork(line, cam, world, spp, NX, NY):
     results = ""
@@ -79,7 +88,7 @@ def doWork(line, cam, world, spp, NX, NY):
 
 def tempColor(r, world, depth):
     rec = hitRecorder()
-    if world.hit(r, 0.0001, MAX_DISTANCE, rec):
+    if world.hit(r, 0.0001, 10000000, rec):
         scattered = ray(vec3(), vec3())
         attenuation = vec3()
         if depth < 50 and rec.material.scatter(r, rec, attenuation, scattered):
@@ -93,20 +102,28 @@ def tempColor(r, world, depth):
 
 def main():
     parser = argparse.ArgumentParser(description = "Renderer based on the book Ray Tracing in One Weekend by Peter Shirley")
-    parser.add_argument("-r", "--resolution", type = int, nargs = 2, default = (480, 340), help = "Resolution of the final image. Ex: 1920 1080")
-    parser.add_argument("-spp", nargs = '?', type = int, default = 100, help = "Samples per pixel")
-    parser.add_argument("-j", nargs = '?', type = int, default = multiprocessing.cpu_count(), help = "Number of processes created")
+    parser.add_argument("-r", "--resolution", type = int, nargs = 2, metavar = ("x", "y"), default = (340, 480), help = "Resolution of the final image. Ex: 1920 1080")
+    parser.add_argument("-spp", nargs = '?', type = int, default = 64, help = "Samples per pixel")
+    parser.add_argument("-scene", nargs = '?', type = str, default = "basic", choices = ["basic", "random", "motion", "cube"], help = "Scene to be render")
+    parser.add_argument("-i", "--image", nargs = '?', type = str, default = "results/image.ppm", help = "Image relative path")
+    parser.add_argument("-t", "--threads", nargs = '?', type = int, default = multiprocessing.cpu_count(), help = "Number of processes to be create")
     args = parser.parse_args()
 
     # Print configuration
+    print("Rendenring %s scene" % args.scene)
+    print("write in %s" % args.image)
     print("Resolution: %d x %d" % (args.resolution[0], args.resolution[1]))
     print("Samples per pixel: %d" % args.spp)
-    print("Number of process: %d" % args.j)
+    print("Number of process: %d" % args.threads)
 
-    #world = randomScene()
-    #world = testScene()
-    #world = motionScene()
-    world = cubeScene()
+    if args.scene == "basic":
+        world = basicScene()
+    elif args.scene == "random":
+        world = randomScene()
+    elif args.scene == "motion":
+        world = motionScene()
+    elif args.scene == "cube":
+        world = cubeScene()
 
     camera_pos = vec3(13, 2, 3)
     look_at = vec3(0, 0, 0)
@@ -115,7 +132,7 @@ def main():
     cam = Camera(args.resolution[0] / args.resolution[1], 20, vec3(0.0, 1.0, 0.0), camera_pos, look_at,  aperture, dist_to_focus, 0.0, 1.0)
 
     # Open and clean file
-    f = open("results/image.ppm", "w+")
+    f = open(args.image, "w+")
     f.truncate(0)
     
     # Heap
@@ -128,8 +145,8 @@ def main():
     f.write("\n")
     
     # MultiThreading
-    pool = multiprocessing.Pool(processes = args.j)
-    results = pool.imap_unordered(partial(doWork, cam = cam, world = world, spp = args.spp, NX = args.resolution[0], NY = args.resolution[1]), reversed(range(0, args.resolution[1])))
+    pool = multiprocessing.Pool(processes = args.threads)
+    results = pool.imap(partial(doWork, cam = cam, world = world, spp = args.spp, NX = args.resolution[0], NY = args.resolution[1]), reversed(range(0, args.resolution[1])))
     pool.close
     jobs_completed = 0
     timer = time.time()
