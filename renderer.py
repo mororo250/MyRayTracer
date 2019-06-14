@@ -50,12 +50,11 @@ def motionScene():
                     world.insert(movingSphere(Dieletric(1.5), center, 0.2, center + vec3(0, 0.5 * random.uniform(0.0, 1.0), 0), 0.0, 1.0))
     return world
 
-def testScene():
+def cubeScene():
     world = hitableCollection()
-    world.insert(sphere(Lambertian(vec3(0.5, 0.5, 0.5)), vec3(0.0, -1000.0, 0.0), 1000))
-    world.insert(sphere(Dieletric(1.5), vec3(0.0, 1.0, 0.0), 1.0))
-    world.insert(sphere(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(-4.0, 1.0, 0.0), 1.0))
-    world.insert(sphere(Metal(vec3(0.7, 0.6, 0.5)), vec3(4.0, 1.0, 0.0), 1.0))
+    world.insert(xz_rect(Lambertian(vec3(0.5, 0.5, 0.5)), -500, 500, -500, 500, 0))
+    world.insert(cube(Metal(vec3(0.7, 0.6, 0.5), 0.5), vec3(-1.0, 0, -1.0), vec3(1.0, 2.0, 1.0)))
+    world.insert(cube(Lambertian(vec3(0.4, 0.2, 0.1)), vec3(3.0, 0.0, -1.0), vec3(5.0, 2.0, 1.0)))
     return world
 
 def doWork(line, cam, world, spp, NX, NY):
@@ -99,14 +98,15 @@ def main():
     parser.add_argument("-j", nargs = '?', type = int, default = multiprocessing.cpu_count(), help = "Number of processes created")
     args = parser.parse_args()
 
-    # Print_config
+    # Print configuration
     print("Resolution: %d x %d" % (args.resolution[0], args.resolution[1]))
     print("Samples per pixel: %d" % args.spp)
-    print("Number of process: %d" % args.j) 
+    print("Number of process: %d" % args.j)
 
     #world = randomScene()
     #world = testScene()
-    world = motionScene()
+    #world = motionScene()
+    world = cubeScene()
 
     camera_pos = vec3(13, 2, 3)
     look_at = vec3(0, 0, 0)
@@ -139,7 +139,7 @@ def main():
             print("Rendering completed in %ds" % current_time)
             break
         if jobs_completed < results._index:
-            jobs_completed = results._index  # __index increment with everey task completion.
+            jobs_completed = results._index # __index increment with everey task completion.
             progress = jobs_completed / args.resolution[1] * 100.0
             print("Progress: %d%%" % progress)
             print("Remaining time: %ds" % ((current_time * 100 / progress) - current_time))

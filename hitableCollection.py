@@ -5,7 +5,6 @@ from ray import *
 from hitRecorder import *
 
 class hitableCollection:
-
     def __init__(self):
         self.__list = []
 

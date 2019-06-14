@@ -40,6 +40,7 @@ class Lambertian:
 
 
 class Metal:
+
     def __init__(self, albedo = vec3(1.0, 1.0, 1.0), fuzz = 1.0):
         if fuzz < 1.0:
             self.__fuzz = fuzz
@@ -54,6 +55,7 @@ class Metal:
         return (vec3.dot(scattered.getDirection(), rec.normal) > 0)
 
 class Dieletric:
+    
     def __init__(self, ri):
         self.ref_idx = ri
 

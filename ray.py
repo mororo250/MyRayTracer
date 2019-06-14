@@ -1,7 +1,7 @@
 from vector import *
 
 class ray:
-
+    
     def __init__(self, origin: vec3, direction: vec3, t = 0.0):
         self.__origin = origin
         self.__direction = direction
