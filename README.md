@@ -10,19 +10,19 @@ Essa é uma implementação em python do Ray Tracing in One Weekend encontrado e
 
 Existem 5 possiveis argumentos, os quais todos são opicionais:
 
-1. --resolution ou -r que recebe duas integrais x e y que vão definir a definição da imagem a ser redenrizada. 
+* --resolution ou -r que recebe duas integrais x e y que vão definir a definição da imagem a ser redenrizada. 
       default - 340 480
-2. -spp é a quantidade de raios gerados por pixel (samples per pixel). 
+* -spp é a quantidade de raios gerados por pixel (samples per pixel). 
       default - 64
-3. -scene defini a cena que será renderizada. Existem 4 possiveis cenas: 
-      1. basic  - Cena simples para testes e rapidas renderizações.
-      2. random - Cena contida na capa do livro do Perer Shirley.
-      3. motion - Demonstra a funcionalidade de montion blur.
-      4. cube   - Renderiza dois cubos um difuso e outro metalico.
-      default - basic
-4. --image ou -i endereço relativo da imagem final.
+* -scene defini a cena que será renderizada. Existem 4 possiveis cenas: 
+      * basic  - Cena simples para testes e rapidas renderizações.
+      * random - Cena contida na capa do livro do Perer Shirley.
+      * motion - Demonstra a funcionalidade de montion blur.
+      * cube   - Renderiza dois cubos um difuso e outro metalico.
+default - basic
+* --image ou -i endereço relativo da imagem final.
       default - results/image.ppm
-5. --threads ou -t numero de processos usados pelo programa.
+* --threads ou -t numero de processos usados pelo programa.
       default - Numero de cores contidos na sua cpu.
 
 ## Implementação:
