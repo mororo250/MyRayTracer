@@ -1,6 +1,12 @@
 # MyRayTracer
 
-### Aluno: João Marcos Mororo Costa
+## Overview 
+
+This is a python implementation of the famous **Ray Tracing in One Weekend**. It was a project for Graphic computation subject in my university. I can't see any use of it, since python is extremaly slow but it may help you if your teacher asks to implement a renderer in python.
+
+## Portugues What was the delivered:
+
+#####Aluno: João Marcos Mororo Costa
 
 ## Visão Geral
 
@@ -90,3 +96,10 @@ Motion Blur é um efeito bastante observado em fotografias e acontece porque os 
 ```
 
 Como pode ver o rio é gerado em um momento aleatório entre um pré determinado intervalo de tempo.
+
+## Referencia:
+
+https://github.com/petershirley
+https://github.com/petershirley/raytracingthenextweek
+https://github.com/appleseedhq/appleseed
+http://jessenoller.com/blog/2009/02/01/python-threads-and-the-global-interpreter-lock/
