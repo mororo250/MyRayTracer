@@ -74,7 +74,7 @@ Além das ésferas, também foi implementado quadrados como uma superficie alter
         return True
 ```
 
-## Motion Blur
+### Motion Blur
 
 A implementação de motion blur também foi retirada do **Ray Tracing: The Next Week**.
 
