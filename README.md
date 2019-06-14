@@ -99,7 +99,7 @@ Como pode ver o rio é gerado em um momento aleatório entre um pré determinado
 
 ## Referencia:
 
-*https://github.com/petershirley
-*https://github.com/petershirley/raytracingthenextweek
-*https://github.com/appleseedhq/appleseed
-*http://jessenoller.com/blog/2009/02/01/python-threads-and-the-global-interpreter-lock/
+* https://github.com/petershirley
+* https://github.com/petershirley/raytracingthenextweek
+* https://github.com/appleseedhq/appleseed
+* http://jessenoller.com/blog/2009/02/01/python-threads-and-the-global-interpreter-lock/
