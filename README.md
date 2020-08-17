@@ -2,7 +2,7 @@
 
 ## Overview 
 
-This is a python implementation of the famous **Ray Tracing in One Weekend**. It was a project for Graphic computation subject in my university. I can't see any use of it, since python is extremaly slow but it may help you if your teacher asks to implement a renderer in python.
+This is a python implementation of the famous **Ray Tracing in One Weekend** and **Ray Tracing: The next week. It was a project for Graphic computation subject in my university. I can't see any use of it, since python is extremaly slow but it may help you if your teacher asks to implement a renderer in python.
 
 ## Portugues What was the delivered:
 
